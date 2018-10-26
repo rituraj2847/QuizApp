@@ -1,0 +1,39 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" href="{% static 'css/st1.css' %}">
+	<link href="https://fonts.googleapis.com/css?family==Raleway:600" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+	<body>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
+	<div class="container">
+	<a class="navbar-brand" href="{% url 'home' %}">
+			QuizApp</a>
+			<ul class="navbar-nav">
+				<li class="nav-item">
+						 {% if request.user.is_authenticated %}
+							<a style="color:white" class="nav-link">Logged in as {{ user }}</a>
+						{% endif %}
+				</li>
+			    <li class="nav-item">
+						{% if request.user.is_authenticated %}
+							<a href="{% url 'signout' %}" class="nav-link">Logout</a>
+						{% else %}
+							<a class="nav-link" href="{% url 'home' %}">Login</a>
+						{% endif %}
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container" style="font-family: 'Raleway', sans-serif;margin-top:100px;padding:19px; background-color: white; border-radius: 15px;">
+	  {% block content %}
+	  {% endblock %}
+	</div>
+  </body>
+</html>

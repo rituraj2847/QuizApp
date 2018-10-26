@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method = "POST" class="post-form">
+    {% csrf_token %}
+    <label for="quiz_name">Enter quiz name:</label>
+    <input class="form-control" type="text" name="quiz_name" id="quiz_name">
+    <br><button type="submit" class="btn btn-primary">
+      Submit
+    </button>
+  </form>
+{% endblock %}

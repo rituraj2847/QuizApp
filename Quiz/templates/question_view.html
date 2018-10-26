@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="progress">
+  <div class="progress-bar" style="width:{{ done_p }}%"></div>
+</div>
+<h1>Quiz : {{ quiz.quiz_name }}</h1>
+  <h1> {{ ques.question_text }} </h1>
+  <form method="POST"> {% csrf_token %}
+    {% for choice in ques.choice_set.all %}
+    <input type="radio" name="choices" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label class="form-check-label" for="choice{{ forloop.counter }}">
+      {{ choice.choice_text }}
+    </label><br>
+    {% endfor %}
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+{% endblock %}

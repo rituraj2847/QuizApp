@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="alert alert-success">
+    Your score is {{ score }}
+  </div>
+  <a href="{% url 'dashboard' %}">Go to Dashboard</a>
+{% endblock %}

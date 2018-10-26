@@ -1,0 +1,21 @@
+
+body {
+  background-image: url(../img/sun-pattern.png)
+}
+a:hover{
+  text-decoration: none;
+  color:lightblue
+}
+nav a{
+  color: white
+}
+.thead-inverse{
+            color: #fff;
+            background-color: #373a3c;
+}
+th td{
+
+}
+.align-middle{
+  text-align:center
+}
