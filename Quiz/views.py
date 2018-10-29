@@ -45,9 +45,11 @@ def dashboard_view(request):
     all_quizzes = Quiz.objects.all().order_by('-date_created')
     if request.user.is_authenticated:
         taken_quizzes = Score.objects.filter(user=request.user).order_by('-taken_on')
+        my_quizzes = request.user.quiz_set.all()
     else:
         taken_quizzes = {}
-    return render(request, 'dashboard.html', {'all_quizzes' : all_quizzes, 'taken_quizzes':taken_quizzes})
+        my_quizzes = {}
+    return render(request, 'dashboard.html', {'all_quizzes' : all_quizzes, 'taken_quizzes':taken_quizzes, 'my_quizzes' : my_quizzes})
 
 @login_required(login_url='/')
 def question_view(request, quiz_id, question_no):
@@ -77,6 +79,8 @@ def new_quiz_view(request):
         date_created = timezone.now()
         author = request.user
         quiz_name = request.POST['quiz_name']
+        if quiz_name == '':
+            return render(request, 'new_quiz.html', {'error_message' : "Quiz name can't be blank"})
         quiz = Quiz.objects.create(date_created=date_created, author=author, quiz_name=quiz_name)
         quiz.save()
         return redirect('add_question', quiz_id=quiz.id, question_no=1)
@@ -86,17 +90,21 @@ def new_quiz_view(request):
 def add_question_view(request, quiz_id, question_no):
     error_message=""
     if request.method == "POST":
-        quiz = get_object_or_404(Quiz, pk=quiz_id)
-        question_text = request.POST['question_text']
-        q = Question(quiz=quiz, question_text=question_text, question_no=question_no)
-        choice1 = Choice(ques = q, choice_text = request.POST['choice1'])
-        choice2 = Choice(ques = q, choice_text = request.POST['choice2'])
-        choice3 = Choice(ques = q, choice_text = request.POST['choice3'])
-        choice4 = Choice(ques = q, choice_text = request.POST['choice4'])
-        if request.POST['choice1'] == '' or request.POST['choice2']=='' or request.POST['choice3']=='' or request.POST['choice4']=='':
+        if request.POST['question_text']=='':
+            context = {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no, 'error_message' : "Question text can't be blank"}
+            return render(request, 'add_question.html', context)
+        elif request.POST['choice1'] == '' or request.POST['choice2']=='' or request.POST['choice3']=='' or request.POST['choice4']=='':
             context = {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no, 'error_message' : "Please fill all choices"}
             return render(request, 'add_question.html', context)
         else:
+            quiz = get_object_or_404(Quiz, pk=quiz_id)
+            question_text = request.POST['question_text']
+            q = Question(quiz=quiz, question_text=question_text, question_no=question_no)
+            q.save()
+            choice1 = Choice(ques = q, choice_text = request.POST['choice1'])
+            choice2 = Choice(ques = q, choice_text = request.POST['choice2'])
+            choice3 = Choice(ques = q, choice_text = request.POST['choice3'])
+            choice4 = Choice(ques = q, choice_text = request.POST['choice4'])
             try:
                 r_choice = request.POST['choice']
                 if r_choice == 'choice1':
@@ -107,21 +115,19 @@ def add_question_view(request, quiz_id, question_no):
                     choice3.right_choice = True
                 elif r_choice == 'choice4':
                     choice4.right_choice = True
-                else:
-                    error_message = "Please enter a valid choice"
-                    return render(request, 'add_question.html', {'error_message' : error_message})
             except MultiValueDictKeyError:
+                q.delete()
                 error_message = "Please mark the correct answer"
                 context =  {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no, "error_message" : error_message}
                 return render(request, 'add_question.html', context)
-            print("fad")
-            q.save()
+
             quiz.no_of_ques = question_no+1
             quiz.save()
             choice1.save()
             choice2.save()
             choice3.save()
             choice4.save()
+            
             return redirect('add_question', quiz_id=quiz_id, question_no=question_no+1)
     else:
         context =  {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no}
@@ -129,8 +135,16 @@ def add_question_view(request, quiz_id, question_no):
 
 def result_view(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    scores = Score.objects.filter(quiz=quiz)
+    scores = quiz.score_set.all().order_by('-score')
     return render(request, 'results.html', {'quiz':quiz, 'scores': scores})
+
+def delete_quiz_view(request, quiz_id):
+    q = Quiz.objects.get(id=quiz_id)
+    if q.author == request.user:
+        q.delete()
+    else:
+        messages.warning(request, "Can't delete it")
+    return redirect('dashboard')
 
 def signout_view(request):
     logout(request)

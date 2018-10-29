@@ -1,13 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractUser
-
 
 class Quiz(models.Model):
     date_created = models.DateTimeField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     quiz_name = models.CharField(max_length=30)
-    no_of_ques = models.IntegerField(null=True)
+    no_of_ques = models.IntegerField(default=0)
     taken_by = models.IntegerField(default=0)
     users = models.ManyToManyField(User, through='Score', related_name='quizzes')
 

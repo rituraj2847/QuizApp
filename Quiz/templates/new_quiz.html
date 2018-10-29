@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+	{% if error_message %}
+	<div class="alert alert-danger">
+	{{ error_message }}
+	</div>
+	{% endif %}
   <form method = "POST" class="post-form">
     {% csrf_token %}
     <label for="quiz_name">Enter quiz name:</label>

@@ -21,6 +21,13 @@
     <a class="nav-link disabled" id="taken-tab" data-toggle="tab" href="#taken" role="tab" aria-controls="taken" aria-selected="false">Taken</a>
     {% endif %}
   </li>
+  <li>
+    {% if request.user.is_authenticated %}
+    <a class="nav-link " id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">My Quizzes</a>
+    {% else %}
+    <a class="nav-link disabled" id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">My Quizzes</a>
+    {% endif %}
+  </li>
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -51,21 +58,44 @@
   </div>
   <div class="tab-pane fade show" id="taken" role="tabpanel" aria-labelledby="taken-tab">
     <table class="table">
-    <thead>
-      <th>Quiz</th>
-      <th>Taken On</th>
-      <th>Score</th>
-    </thead>
-    <tbody>
-        {% for q in taken_quizzes %}
-         <tr>
-          <td>{{ q.quiz }}</td>
-          <td>{{ q.taken_on }}</td>
-          <td>{{ q.score }}</td>
+      <thead>
+        <th>Quiz</th>
+        <th>Taken On</th>
+        <th>Score</th>
+      </thead>
+      <tbody>
+          {% for q in taken_quizzes %}
+           <tr>
+            <td>{{ q.quiz }}</td>
+            <td>{{ q.taken_on }}</td>
+            <td>{{ q.score }} / {{ q.quiz.no.no_of_ques }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="tab-pane fade show" id="myquizzes" role="tabpanel" aria-labelledby="myquizzes-tab">
+    <table class="table table-hover">
+      <thead class="thead-inverse">
+       <tr>
+         <th>Quiz</th>
+         <th>Questions</th>
+         <th>Taken By</th>
+         <th></th><th></th>
+       </tr>
+      </thead>
+      <tbody>
+        {% for quiz in my_quizzes %}
+        <tr>
+          <td>{{ quiz.quiz_name }}<br>
+          <small class="text-muted d-block">{{ quiz.date_created|date:"d M, Y \a\t G:i" }}</small></td>
+          <td class="align-middle">{{ quiz.no_of_ques }}</td>
+          <td class="align-middle">{{ quiz.taken_by }}</td>
+          <td class="align-middle"><a href="{% url 'delete_quiz' quiz.id %}"><button type="button" class="btn btn-danger">Delete quiz</button></a></td>
         </tr>
-      {% endfor %}
-    </tbody>
-</table>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 {% endblock %}
