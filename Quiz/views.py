@@ -128,14 +128,17 @@ def add_question_view(request, quiz_id, question_no):
                 context =  {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no, "error_message" : error_message}
                 return render(request, 'add_question.html', context)
 
-            quiz.no_of_ques = question_no+1
+            quiz.no_of_ques = question_no
             quiz.save()
             choice1.save()
             choice2.save()
             choice3.save()
             choice4.save()
-            
-            return redirect('add_question', quiz_id=quiz_id, question_no=question_no+1)
+
+            if '_save&add' in request.POST:
+                return redirect('add_question', quiz_id=quiz_id, question_no=question_no+1)
+            else:
+                return redirect('dashboard')
     else:
         context =  {'quiz_name': Quiz.objects.get(pk=quiz_id).quiz_name, 'ques_no' : question_no}
         return render(request, 'add_question.html', context)
