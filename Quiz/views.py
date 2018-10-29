@@ -54,12 +54,19 @@ def dashboard_view(request):
 @login_required(login_url='/')
 def question_view(request, quiz_id, question_no):
     global score
-    if request.method == "POST":
-        selected_choice = Choice.objects.get(id = request.POST["choices"])
-        if selected_choice.right_choice == True:
-            score += 1
-        return redirect('question', quiz_id=quiz_id, question_no=question_no+1)
     quiz = get_object_or_404(Quiz, pk=quiz_id)
+    if request.method == "POST":
+        try:
+            selected_choice = Choice.objects.get(id = request.POST["choices"])
+            if selected_choice.right_choice == True:
+                score += 1
+        except MultiValueDictKeyError:
+            ques = ques = quiz.question_set.all()[question_no-1]
+            done_p = int(100*question_no/len(quiz.question_set.all()))
+            context = {'quiz' : quiz, 'ques' : ques, 'done_p' : done_p}
+            messages.warning(request, "Please select a choice")
+            return render(request, 'question_view.html', context)
+        return redirect('question', quiz_id=quiz_id, question_no=question_no+1)
     if question_no == len(quiz.question_set.all())+1:
         quiz.taken_by += 1
         quiz.save()
