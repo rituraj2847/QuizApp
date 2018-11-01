@@ -3,7 +3,7 @@
 {% block content %}
 {% if messages %}
 {% for message in messages %}
-<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
 {% endfor %}
 {% endif %}
 <a style="float:right" href="{% url 'new_quiz' %}">
@@ -12,7 +12,7 @@
 <h1> Dashboard </h1>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Quizzes</a>
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">All Quizzes</a>
   </li>
   <li>
     {% if request.user.is_authenticated %}
@@ -23,9 +23,9 @@
   </li>
   <li>
     {% if request.user.is_authenticated %}
-    <a class="nav-link " id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">My Quizzes</a>
+    <a class="nav-link " id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">Quizzes by me</a>
     {% else %}
-    <a class="nav-link disabled" id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">My Quizzes</a>
+    <a class="nav-link disabled" id="myquizzes-tab" data-toggle="tab" href="#myquizzes" role="tab" aria-controls="myquizzes" aria-selected="false">Quizzes by me</a>
     {% endif %}
   </li>
 </ul>
@@ -50,7 +50,6 @@
           <td class="align-middle">{{ quiz.no_of_ques }}</td>
           <td class="align-middle">{{ quiz.taken_by }}</td>
           <td class="align-middle"><a href="{% url 'question' quiz.id 1 %}"><button class="btn btn-success">Take Quiz</button></a></td>
-          <td class="align-middle"><a href="{% url 'results' quiz.id %}"><button type="button" class="btn btn-info">View results</button></a></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -60,17 +59,19 @@
     <table class="table">
       <thead>
         <th>Quiz</th>
+        <th>Author</th>
         <th>Taken On</th>
         <th>Score</th>
       </thead>
       <tbody>
           {% for q in taken_quizzes %}
-           <tr>
+          <tr>
             <td>{{ q.quiz }}</td>
+            <td>{{ q.quiz.author.first_name }}</td>
             <td>{{ q.taken_on }}</td>
-            <td>{{ q.score }} / {{ q.quiz.no.no_of_ques }}</td>
+            <td>{{ q.score }} / {{ q.quiz.no_of_ques }}</td>
           </tr>
-        {% endfor %}
+          {% endfor %}
       </tbody>
     </table>
   </div>
@@ -81,7 +82,9 @@
          <th>Quiz</th>
          <th>Questions</th>
          <th>Taken By</th>
-         <th></th><th></th>
+         <th>Highest Score</th>
+         <th></th>
+         <th></th>
        </tr>
       </thead>
       <tbody>
@@ -91,7 +94,9 @@
           <small class="text-muted d-block">{{ quiz.date_created|date:"d M, Y \a\t G:i" }}</small></td>
           <td class="align-middle">{{ quiz.no_of_ques }}</td>
           <td class="align-middle">{{ quiz.taken_by }}</td>
+          <td class="align-middle">{{ quiz.highest_score }}</td>
           <td class="align-middle"><a href="{% url 'delete_quiz' quiz.id %}"><button type="button" class="btn btn-danger">Delete quiz</button></a></td>
+          <td class="align-middle"><a href="{% url 'results' quiz.id %}"><button type="button" class="btn btn-info">View Results</button></a></td>
         </tr>
         {% endfor %}
       </tbody>

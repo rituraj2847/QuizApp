@@ -7,6 +7,7 @@ class Quiz(models.Model):
     quiz_name = models.CharField(max_length=30)
     no_of_ques = models.IntegerField(default=0)
     taken_by = models.IntegerField(default=0)
+    highest_score = models.IntegerField(default=0)
     users = models.ManyToManyField(User, through='Score', related_name='quizzes')
 
     def __str__(self):

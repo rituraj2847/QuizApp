@@ -1,7 +1,8 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<h2>Results for Quiz : {{ quiz.quiz_name }}</h2>
+<a href="{% url 'dashboard' %}">Go to Dashboard</a><hr>
+<h2>Results for Quiz : <span class="badge badge-pill badge-secondary">{{ quiz.quiz_name }}</span></h2>
 <br>
 <table class="table">
   <thead>
@@ -16,6 +17,6 @@
 	   		<td>{{  score.taken_on }}</td>
 	   		<td>{{ score.score }} / {{ score.quiz.no_of_ques }}</td>
    		</tr>
-   		{% endfor %}
+   	{% endfor %}
    </tbody>
 {% endblock %}
