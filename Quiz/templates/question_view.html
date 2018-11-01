@@ -11,7 +11,7 @@
 </div>
 <h1 style="text-align: center"><span class="badge badge-pill badge-secondary">{{ quiz.quiz_name }}</span></h1>
 <hr>
-  <h1> <span class="badge badge-light">{{ ques.question_text }} </span></h1><br>
+  <h2>{{ques.question_text }}</h2><br>
   <form method="POST"> {% csrf_token %}
     {% for choice in ques.choice_set.all %}
     <h5><input type="radio" name="choices" id="choice{{ forloop.counter }}" value="{{ choice.id }}">

@@ -6,7 +6,7 @@
 {{ error_message }}
 </div>
 {% endif %}
-<h1>Quiz : {{ quiz_name }}</h1>
+<h1 style="text-align: center"><span class="badge badge-pill badge-secondary">{{ quiz_name }}</span></h1>
 <form method = "POST" class="post-form">
   {% csrf_token %}
   <label for="q">Question No: {{ ques_no }}</label>
